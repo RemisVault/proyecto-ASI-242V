@@ -38,3 +38,6 @@ foreach ($sub in $subcarpetas) {
     # Crear el archivo .gitkeep para que GitHub las acepte
     New-Item -Path "$rutaCompleta/.gitkeep" -ItemType File -Force
 }
+
+
+# Este script representa la infraestructura inicial. A posteriori se añadieron nuevos directorios
