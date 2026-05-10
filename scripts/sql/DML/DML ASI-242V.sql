@@ -203,4 +203,31 @@ INSERT INTO USUARIOS_CREDENCIALES (AMBITO, USUARIO, PASSWORD_HASH, ID_EQUIPO) VA
 INSERT INTO USUARIOS_CREDENCIALES (AMBITO, USUARIO, PASSWORD_HASH, ID_EQUIPO) VALUES ('FILER01-242V', 'root', STANDARD_HASH('Moreniko$hikitico', 'SHA256'), 5);
 INSERT INTO USUARIOS_CREDENCIALES (AMBITO, USUARIO, PASSWORD_HASH, ID_EQUIPO) VALUES ('EXTERNA01-242V', 'admin', STANDARD_HASH('Moreniko$hikitico', 'SHA256'), 9);
 
+-- ----------------------------------------------------------
+-- RELACIÓN EQUIPOS Y SERVICIOS (Tabla intermedia)
+-- ----------------------------------------------------------
+
+-- ROUTER01 (ID 1) -> DHCP (5), OpenVPN (6), DNS (4)
+INSERT INTO equipo_servicio (id_equipo, id_servicio) VALUES (1, 5);
+INSERT INTO equipo_servicio (id_equipo, id_servicio) VALUES (1, 6);
+INSERT INTO equipo_servicio (id_equipo, id_servicio) VALUES (1, 4);
+
+-- LAMP01 (ID 2) -> Apache2 (1), MySQL/MariaDB (2)
+INSERT INTO equipo_servicio (id_equipo, id_servicio) VALUES (2, 1);
+INSERT INTO equipo_servicio (id_equipo, id_servicio) VALUES (2, 2);
+
+-- DC01 (ID 3) -> Active Directory (3), DNS (4)
+INSERT INTO equipo_servicio (id_equipo, id_servicio) VALUES (3, 3);
+INSERT INTO equipo_servicio (id_equipo, id_servicio) VALUES (3, 4);
+
+-- DC02 (ID 4) -> Active Directory (3), DNS (4)
+INSERT INTO equipo_servicio (id_equipo, id_servicio) VALUES (4, 3);
+INSERT INTO equipo_servicio (id_equipo, id_servicio) VALUES (4, 4);
+
+-- FILER01 (ID 5) -> SMB/NFS (7)
+INSERT INTO equipo_servicio (id_equipo, id_servicio) VALUES (5, 7);
+
+-- VCENTER01 (ID 12) -> VCSA (8)
+INSERT INTO equipo_servicio (id_equipo, id_servicio) VALUES (12, 8);
+
 COMMIT;
