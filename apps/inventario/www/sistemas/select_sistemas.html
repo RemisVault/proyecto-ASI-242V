@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Buscar Sistemas Operativos</title>
+</head>
+<body>
+
+<!-- EXPORTACIÓN -->
+<div style="float: left; text-align: left; margin-left: 15px; margin-top: 15px;">
+
+    <a href="select_sistemas.php?exportar=csv">
+        <button type="button">Exportar CSV</button>
+    </a>
+
+</div>
+
+<div style="clear: both;"></div>
+
+<center>
+
+    <h2>Buscar Sistemas Operativos</h2>
+
+    <form method="post" action="select_sistemas.php">
+
+        <label for="nombre">Nombre del sistema:</label>
+
+        <input type="text"
+               id="nombre"
+               name="nombre"
+               placeholder="Ej: Windows, Ubuntu, Debian"
+               required>
+
+        <button type="submit">Buscar</button>
+
+    </form>
+
+    <hr width="50%" style="margin: 25px 0; border: 0; border-top: 1px solid #ccc;">
+
+    <p><a href="index.php">Volver al menú de Sistemas</a></p>
+
+</center>
+
+</body>
+</html>

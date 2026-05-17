@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle Equipos</title>
+</head>
+<body>
+
+<div style="float: left; margin: 15px;">
+    <a href="select_equipos_detalle.php?exportar=csv">
+        <button type="button">Exportar CSV</button>
+    </a>
+</div>
+
+<div style="clear: both;"></div>
+
+<center>
+
+<h2>Consulta completa de Equipos</h2>
+
+<form method="post" action="select_equipos_detalle.php">
+
+    <label>Hostname:</label>
+
+    <input type="text" name="hostname" placeholder="Vacío = todos">
+
+    <button type="submit">Buscar</button>
+
+</form>
+
+<br>
+
+<p><a href="index.php">Volver</a></p>
+
+</center>
+
+</body>
+</html>

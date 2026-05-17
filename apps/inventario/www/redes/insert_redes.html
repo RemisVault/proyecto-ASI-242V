@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Insertar Redes</title>
+</head>
+<body>
+
+<center>
+
+    <h2>Insertar Nueva Red</h2>
+
+    <form method="post" action="insert_redes.php">
+
+        <label>Nombre de la red:</label><br>
+        <input type="text"
+               name="nombre_red"
+               placeholder="EXTERNA, DMZ, SERVIDORES INTERNOS"
+               required><br><br>
+
+        <label>Dirección (CIDR):</label><br>
+        <input type="text"
+               name="direccion_red"
+               placeholder="10.31.9.0/24"
+               required><br><br>
+
+        <label>Gateway:</label><br>
+        <input type="text"
+               name="gateway"
+               placeholder="10.31.9.254"
+               required><br><br>
+
+        <label>Interfaz Router:</label><br>
+        <input type="text"
+               name="interfaz_router"
+               placeholder="eth0, eth1, tun0"
+               required><br><br>
+
+        <label>Descripción:</label><br>
+        <input type="text"
+               name="descripcion"
+               placeholder="Red de producción / DMZ / etc"><br><br>
+
+        <button type="submit">Insertar</button>
+
+    </form>
+
+    <br><br>
+
+    <p><a href="index.php">Volver al menú de Redes</a></p>
+
+</center>
+
+</body>
+</html>

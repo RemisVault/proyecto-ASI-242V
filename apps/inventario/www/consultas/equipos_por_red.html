@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Buscar Equipos por Red</title>
+</head>
+<body>
+
+<div style="float: left; margin: 15px;">
+    <a href="../menu.php"><button type="button" style="cursor: pointer;">Volver al Menú</button></a>
+</div>
+
+<div style="clear: both;"></div>
+
+<center>
+    <h1>Listar Equipos por Red</h1>
+    <p>Introduce el nombre de la red (ej. DMZ) para recuperar los equipos asociados.</p>
+
+    <form action="buscar_equipos.php" method="POST" style="margin-bottom: 30px;">
+        <label for="nombre_red">Nombre de la Red:</label>
+        <input type="text" id="nombre_red" name="nombre_red" placeholder="Ej. DMZ" required>
+        <button type="submit" style="cursor: pointer;">Buscar</button>
+    </form>
+</center>
+
+</body>
+</html>

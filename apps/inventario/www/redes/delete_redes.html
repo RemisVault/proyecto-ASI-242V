@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Eliminar Redes</title>
+</head>
+<body>
+
+<center>
+
+    <h2>Eliminar Red</h2>
+
+    <p style="color:red;">
+        Esta acción eliminará la red de forma permanente
+    </p>
+
+    <form method="post" action="delete_redes.php">
+
+        <label for="nombre_red">Nombre de la red:</label>
+
+        <input type="text"
+               id="nombre_red"
+               name="nombre_red"
+               placeholder="Ej: LAN-OFICINA"
+               required>
+
+        <button type="submit"
+                onclick="return confirm('¿Seguro que quieres eliminar esta red?')">
+            Eliminar
+        </button>
+
+    </form>
+
+    <br><br>
+
+    <p><a href="index.php">Volver al menú de Redes</a></p>
+
+</center>
+
+</body>
+</html>

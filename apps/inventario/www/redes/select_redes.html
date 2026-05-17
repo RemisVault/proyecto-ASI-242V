@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Buscar Redes</title>
+</head>
+<body>
+
+    <!-- EXPORTACIÓN -->
+    <div style="float: left; text-align: left; margin-left: 15px; margin-top: 15px;">
+        <a href="select_redes.php?exportar=csv">
+            <button type="button">Exportar CSV</button>
+        </a>
+    </div>
+
+    <div style="clear: both;"></div>
+
+    <center>
+
+        <h2>Buscar Redes por Nombre</h2>
+
+        <form method="post" action="select_redes.php">
+
+            <label for="nombre_red">Nombre de la Red:</label>
+
+            <input type="text"
+                   id="nombre_red"
+                   name="nombre_red"
+                   placeholder="Ej: DMZ o LAN"
+                   required>
+
+            <button type="submit">Buscar</button>
+
+        </form>
+
+        <hr width="50%" style="margin: 25px 0; border: 0; border-top: 1px solid #ccc;">
+
+        <p><a href="index.php">Volver al menú de Redes</a></p>
+
+    </center>
+
+</body>
+</html>

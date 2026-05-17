@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Actualizar Redes</title>
+</head>
+<body>
+
+    <!-- EXPORTACIÓN (mismo estilo que select_redes) -->
+    <div style="float: left; text-align: left; margin-left: 15px; margin-top: 15px;">
+        <a href="update_redes.php?exportar=csv">
+            <button type="button">Exportar CSV</button>
+        </a>
+    </div>
+
+    <div style="clear: both;"></div>
+
+    <center>
+
+        <h2>Actualizar Red</h2>
+
+        <form method="post" action="update_redes.php">
+
+            <p>
+                <label for="nombre_red">Nombre de la Red a modificar:</label><br>
+                <input type="text"
+                       id="nombre_red"
+                       name="nombre_red"
+                       placeholder="Ej: DMZ o LAN"
+                       required>
+            </p>
+
+            <p>
+                <label for="direccion_red">Nueva Dirección de Red:</label><br>
+                <input type="text"
+                       id="direccion_red"
+                       name="direccion_red"
+                       placeholder="Ej: 192.168.1.0/24"
+                       required>
+            </p>
+
+            <p>
+                <label for="gateway">Nuevo Gateway:</label><br>
+                <input type="text"
+                       id="gateway"
+                       name="gateway"
+                       placeholder="Ej: 192.168.1.1">
+            </p>
+
+            <button type="submit">Actualizar</button>
+
+        </form>
+
+        <hr width="50%" style="margin: 25px 0; border: 0; border-top: 1px solid #ccc;">
+
+        <p><a href="index.php">Volver al menú de Redes</a></p>
+
+    </center>
+
+</body>
+</html>

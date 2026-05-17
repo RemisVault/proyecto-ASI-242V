@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Buscar Equipos</title>
+</head>
+<body>
+
+    <!-- EXPORTACIÓN -->
+    <div style="float: left; text-align: left; margin-left: 15px; margin-top: 15px;">
+        <a href="select_equipos.php?exportar=csv">
+            <button type="button">Exportar CSV</button>
+        </a>
+    </div>
+
+    <div style="clear: both;"></div>
+
+    <center>
+
+        <h2>Buscar Equipos por Hostname</h2>
+
+        <form method="post" action="select_equipos.php">
+
+            <label for="hostname">Hostname del equipo:</label>
+
+            <input type="text"
+                   id="hostname"
+                   name="hostname"
+                   placeholder="Ej: server01 o pc-oficina"
+                   required>
+
+            <button type="submit">Buscar</button>
+
+        </form>
+
+        <hr width="50%" style="margin: 25px 0; border: 0; border-top: 1px solid #ccc;">
+
+        <p><a href="index.php">Volver al menú de Equipos</a></p>
+
+    </center>
+
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Eliminar Equipos</title>
+</head>
+<body>
+
+<center>
+
+    <h2>Eliminar Equipo</h2>
+
+    <p style="color:red;">
+        Esta acción eliminará el equipo de forma permanente
+    </p>
+
+    <form method="post" action="delete_equipos.php">
+
+        <label for="hostname">Hostname del equipo:</label>
+
+        <input type="text"
+               id="hostname"
+               name="hostname"
+               placeholder="Ej: server01"
+               required>
+
+        <button type="submit"
+                onclick="return confirm('¿Seguro que quieres eliminar este equipo?')">
+            Eliminar
+        </button>
+
+    </form>
+
+    <br><br>
+
+    <p><a href="index.php">Volver al menú de Equipos</a></p>
+
+</center>
+
+</body>
+</html>
