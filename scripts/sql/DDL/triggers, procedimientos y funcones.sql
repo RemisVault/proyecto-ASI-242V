@@ -106,7 +106,7 @@ EXCEPTION
     WHEN NO_DATA_FOUND THEN
         RAISE_APPLICATION_ERROR(-20004, 'Error: La red especificada no existe.');
 END;
-
+/
 
 CREATE OR REPLACE FUNCTION fun_contar_equipos_red (
     p_nombre_red IN redes.nombre_red%TYPE
@@ -147,4 +147,4 @@ EXCEPTION
     WHEN NO_DATA_FOUND THEN
         RAISE_APPLICATION_ERROR(-20007, 'Error: El equipo especificado no existe.');
 END;
-
+/
