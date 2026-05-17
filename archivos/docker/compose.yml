@@ -1,0 +1,190 @@
+version: '3.8'
+
+networks:
+  red_proxy:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.100.0/24
+          gateway: 192.168.100.1
+  red_datos_wordpress:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.101.0/24
+  red_datos_moodle:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.102.0/24
+  red_datos_inventario:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.103.0/24
+
+services:
+  # --- NGINX PROXY MANAGER ---
+  nginx:
+    container_name: servidor_proxy
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+      - "81:81"
+    environment:
+      - DISABLE_IPV6=true
+    networks:
+      red_proxy:
+        ipv4_address: 192.168.100.10
+    volumes:
+      - ./bind-mounts/nginx-gui/data:/data
+      - ./bind-mounts/nginx-gui/letsencrypt:/etc/letsencrypt
+
+  # --- WORDPRESS ---
+  wordpress:
+    container_name: wordpress_frontend
+    hostname: wp_ft.asi-242v
+    build: ./images/wordpress
+    networks:
+      red_proxy:
+        ipv4_address: 192.168.100.20
+      red_datos_wordpress:
+        ipv4_address: 192.168.101.10
+    ports:
+      - "21:21"
+      - "40000-40005:40000-40005"
+    volumes:
+      - ./bind-mounts/wordpress/www:/var/www/html
+      - ./bind-mounts/wordpress/config/vsftpd.conf:/etc/vsftpd.conf:ro
+      - ./bind-mounts/wordpress/config/vsftpd.userlist:/etc/vsftpd.userlist:ro
+      - ./certs:/etc/ssl/certs_custom:ro
+      - ./phpmyadmin_restriction.conf:/etc/apache2/conf-enabled/z-custom.conf:ro
+      - ./remoteip.conf:/etc/apache2/conf-enabled/remoteip.conf:ro
+      - ./bind-mounts/wordpress/config/config_pma_wp.php:/etc/phpmyadmin/config.inc.php:ro
+    restart: always
+
+  wordpress_backend:
+    container_name: wordpress_backend
+    hostname: wp_bk.asi-242v
+    image: mysql:8.0
+    restart: always
+    environment:
+      - MYSQL_DATABASE=${WP_DB_NAME}
+      - MYSQL_USER=${WP_DB_USER}
+      - MYSQL_PASSWORD=${WP_DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${WP_DB_ROOT_PASSWORD}
+    networks:
+      red_datos_wordpress:
+        ipv4_address: 192.168.101.20
+    volumes:
+      - ./bind-mounts/wordpress/mysql:/var/lib/mysql
+
+  # --- MOODLE ---
+  moodle:
+    container_name: moodle_frontend
+    hostname: moodle_ft.asi-242v
+    build: ./images/moodle
+    networks:
+      red_proxy:
+        ipv4_address: 192.168.100.30
+      red_datos_moodle:
+        ipv4_address: 192.168.102.10
+    ports:
+      - "2121:21"
+      - "40006-40010:40006-40010"
+    volumes:
+      - ./bind-mounts/moodle/www:/var/www/html
+      - ./bind-mounts/moodle/moodledata:/var/moodledata
+      - ./bind-mounts/moodle/config/vsftpd.conf:/etc/vsftpd.conf:ro
+      - ./bind-mounts/moodle/config/vsftpd.userlist:/etc/vsftpd.userlist:ro
+      - ./certs:/etc/ssl/certs_custom:ro
+      - ./phpmyadmin_restriction.conf:/etc/apache2/conf-enabled/z-custom.conf:ro
+      - ./remoteip.conf:/etc/apache2/conf-enabled/remoteip.conf:ro
+      - ./bind-mounts/moodle/config/config_pma_moodle.php:/etc/phpmyadmin/config.inc.php:ro
+    restart: always
+
+  moodle_backend:
+    container_name: moodle_backend
+    hostname: moodle_bk.asi-242v
+    image: mariadb:10.11
+    restart: always
+    environment:
+      - MYSQL_DATABASE=${MOODLE_DB_NAME}
+      - MYSQL_USER=${MOODLE_DB_USER}
+      - MYSQL_PASSWORD=${MOODLE_DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MOODLE_DB_ROOT_PASSWORD}
+    networks:
+      red_datos_moodle:
+        ipv4_address: 192.168.102.20
+    volumes:
+      - ./bind-mounts/moodle/mysql:/var/lib/mysql
+
+  # --- INVENTARIO (ORACLE) ---
+  inventario:
+    container_name: inventario_frontend
+    hostname: inv_ft.asi-242v
+    build: ./images/inventario
+    networks:
+      red_proxy:
+        ipv4_address: 192.168.100.40
+      red_datos_inventario:
+        ipv4_address: 192.168.103.10
+    ports:
+      - "2122:21"
+      - "40011-40015:40011-40015"
+    volumes:
+      - ./bind-mounts/inventario/www:/var/www/html
+      - ./bind-mounts/inventario/privado:/var/www/privado
+      - ./bind-mounts/inventario/images:/var/www/html/images
+      - ./bind-mounts/inventario/config/vsftpd.conf:/etc/vsftpd.conf:ro
+      - ./bind-mounts/inventario/config/vsftpd.userlist:/etc/vsftpd.userlist:ro
+      - ./certs:/etc/ssl/certs_custom:ro
+    restart: always
+
+  inventario_backend:
+    container_name: inventario_backend
+    hostname: inv_bk.asi-242v
+    image: gvenzl/oracle-xe:21-full
+    shm_size: '3gb'
+    privileged: true
+    networks:
+      red_datos_inventario:
+        ipv4_address: 192.168.103.20
+    ports:
+      - "1521:1521"
+      - "5500:5500"
+    volumes:
+      - oracle_vol_final:/opt/oracle/oradata
+    environment:
+      - ORACLE_PASSWORD=${ORACLE_ROOT_PASSWORD}
+      - APP_USER=${ORACLE_APP_USER}
+      - APP_USER_PASSWORD=${ORACLE_APP_PASSWORD}
+    restart: always
+
+  # --- DEFAULT SITE ---
+  default:
+    container_name: contenedor_default
+    hostname: default_ft.asi-242v
+    build: ./images/default
+    networks:
+      red_proxy:
+        ipv4_address: 192.168.100.50
+    ports:
+      - "2123:21"
+      - "40016-40020:40016-40020"
+    volumes:
+      - ./bind-mounts/default/www:/var/www/html
+      - ./bind-mounts/default/config/vsftpd.conf:/etc/vsftpd.conf:ro
+      - ./bind-mounts/default/config/vsftpd.userlist:/etc/vsftpd.userlist:ro
+      - ./certs:/etc/ssl/certs_custom:ro
+    restart: always
+
+volumes:
+  oracle_vol_final:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/mnt/raid5/infra/bind-mounts/inventario/oracle_data'

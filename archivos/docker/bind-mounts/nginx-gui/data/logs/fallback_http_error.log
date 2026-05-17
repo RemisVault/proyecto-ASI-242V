@@ -1,0 +1,1 @@
+2026/05/13 22:11:59 [alert] 214#214: *562 512 worker_connections are not enough while connecting to upstream, client: 127.0.0.1, server: localhost-nginx-proxy-manager, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:80/favicon.ico", host: "www.inventario.asi-242v.cifpaviles.com", referrer: "http://www.inventario.asi-242v.cifpaviles.com/"
