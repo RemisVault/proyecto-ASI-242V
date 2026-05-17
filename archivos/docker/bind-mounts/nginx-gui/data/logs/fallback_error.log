@@ -1,3 +1,0 @@
-2026/05/13 21:52:44 [warn] 302#302: 512 worker_connections are not enough, reusing connections
-2026/05/13 22:11:59 [warn] 214#214: 512 worker_connections are not enough, reusing connections
-2026/05/13 22:22:46 [warn] 239#239: *597 a client request body is buffered to a temporary file /tmp/nginx/body/4/25/0000000254, client: 172.16.24.1, server: nginxproxymanager, request: "POST /api/nginx/certificates/validate HTTP/1.1", host: "172.16.24.77:81", referrer: "http://172.16.24.77:81/certificates"

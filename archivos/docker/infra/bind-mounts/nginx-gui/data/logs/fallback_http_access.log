@@ -1,0 +1,3 @@
+[13/May/2026:22:10:28 +0000] 200 - GET http inventario.asi-242v.cifpaviles.com "/" [Client 10.232.2.3] [Length 568] [Gzip 1.86] "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36" "-"
+[13/May/2026:22:11:35 +0000] 200 - GET http inventario.asi-242v.cifpaviles.com "/" [Client 172.28.24.11] [Length 568] [Gzip 1.86] "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "-"
+[13/May/2026:22:11:59 +0000] 200 - GET http www.inventario.asi-242v.cifpaviles.com "/" [Client 172.28.24.11] [Length 568] [Gzip 1.86] "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0" "-"
