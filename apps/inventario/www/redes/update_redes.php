@@ -19,7 +19,7 @@ $gateway = limpiar($_POST["gateway"] ?? '');
 echo "<center>";
 
 // ==========================================================
-// VALIDACIÓN BÁSICA
+// VALIDACIÓN 
 // ==========================================================
 if (!preg_match('/^[A-Z0-9\s_-]+$/', $nombre_red)) {
     echo "<h2>Error</h2>";

@@ -29,7 +29,7 @@ if (!preg_match('/^[A-Z0-9\s_-]+$/', $nombre_red)) {
 }
 
 // ==========================================================
-// 1. OBTENER ID_RED (MEJOR PRÁCTICA)
+// 1. OBTENER ID_RED 
 // ==========================================================
 $sql = "SELECT ID_RED FROM REDES WHERE NOMBRE_RED = :nombre_red";
 $stmt = oci_parse($conn, $sql);
@@ -52,7 +52,7 @@ if (!$row) {
 $id_red = $row['ID_RED'];
 
 // ==========================================================
-// 2. CHECK FK (EQUIPOS DEPENDEN DE REDES)
+// 2. CHECK FK 
 // ==========================================================
 $sql = "SELECT COUNT(*) AS TOTAL FROM EQUIPOS WHERE ID_RED = :id_red";
 $stmt = oci_parse($conn, $sql);

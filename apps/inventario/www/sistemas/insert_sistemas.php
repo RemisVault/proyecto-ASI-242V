@@ -18,7 +18,7 @@ $version = strtoupper(limpiar($_POST["version"] ?? ''));
 echo "<center>";
 
 // =========================================================
-// VALIDACIÓN (IMPORTANTE)
+// VALIDACIÓN 
 // =========================================================
 if (!preg_match('/^[A-Z0-9\s.\-_]+$/', $nombre)) {
     echo "<h2>Error de Validación</h2>";

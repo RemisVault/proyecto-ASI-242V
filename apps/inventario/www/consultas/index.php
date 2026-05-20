@@ -25,7 +25,7 @@ $user = $_SESSION["user"];
     <h3>Consultas disponibles</h3>
 
     <p>
-        <a href="select_equipos_detalle.html">
+        <a href="select_equipos_detalle.php">
             Consultas multitabla
         </a>
     </p>

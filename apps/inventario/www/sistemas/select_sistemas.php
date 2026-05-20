@@ -76,9 +76,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     echo "<h2>Resultados de búsqueda</h2>";
 
-    // =====================================================
-    // 🔥 FIX REAL ORACLE: UPPER en SQL
-    // =====================================================
     $query = "SELECT ID_SO, NOMBRE, VERSION
               FROM SISTEMAS_OPERATIVOS
               WHERE UPPER(NOMBRE) LIKE :nombre
