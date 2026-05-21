@@ -1,10 +1,8 @@
 <?php
-// Cabeceras de seguridad HTTP
 header("X-Frame-Options: DENY");
 header("X-Content-Type-Options: nosniff");
 header("Referrer-Policy: no-referrer-when-downgrade");
 
-// Configuración de sesión segura
 session_set_cookie_params([
     'lifetime' => 0,
     'path'     => '/',
@@ -18,7 +16,14 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// ¡Función global para usar en todo el sitio!
+// Comprobamos si no está autenticado
+if (!isset($_SESSION['usuario_autenticado']) || $_SESSION['usuario_autenticado'] !== true) {
+    if (basename($_SERVER['SCRIPT_NAME']) !== 'index.php' && basename($_SERVER['SCRIPT_NAME']) !== 'auth.php') {
+        header("Location: /index.php");
+        exit;
+    }
+}
+
 function limpiar($data) {
     $data = trim($data);
     $data = stripslashes($data);

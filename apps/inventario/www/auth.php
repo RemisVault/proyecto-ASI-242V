@@ -2,18 +2,16 @@
 require_once '/var/www/privado/session.safe.php';
 require_once '/var/www/privado/db.connect.ldap_admin.php';
 
-$user = limpiar($_POST["user"]);
+$user = limpiar($_POST["user"] ?? '');
 
-// Validación estricta con preg_match para el usuario antes de procesar la petición
-// Permite letras, números, puntos, guiones y guiones bajos
-if (!preg_match("/^[a-zA-Z0-9._-]+$/", $user)) {
+if (!preg_match("/^[a-zA-Z0-9._-]+$/", $user) || $user === '') {
     echo "Formato de usuario no válido.";
-    echo "<br><br><a href='index.php'><button>Volver</button></a>";
+    echo "<br><br><a href='index.php'><button type='button'>Volver</button></a>";
     exit;
 }
 
 $user_ldap = str_replace(array('\\', '*', '(', ')', "\0"), '', $user);
-$password = limpiar($_POST["password"]);
+$password = $_POST["password"] ?? '';
 
 $auth_success = false;
 
@@ -38,7 +36,7 @@ foreach ($ldap_hosts as $host) {
 
                 if (@ldap_bind($ldap_conn, $user_dn, $password)) {
                     $auth_success = true;
-                    $_SESSION["auth"] = true;
+                    $_SESSION["usuario_autenticado"] = true;
                     $_SESSION["user"] = $user;
                 }
             }
@@ -54,7 +52,7 @@ if ($auth_success) {
     header("Location: menu.php");
     exit;
 } else {
-    echo "Autenticación fallida para el usuario: " . htmlspecialchars($user);
-    echo "<br><br><a href='index.php'><button>Volver</button></a>";
+    echo "Autenticación fallida.";
+    echo "<br><br><a href='index.php'><button type='button'>Volver</button></a>";
 }
 ?>
