@@ -4,7 +4,7 @@ require_once '/var/www/privado/session.safe.php';
 require_once '/var/www/privado/db.connect.oracle.php';
 
 if (!$conn) {
-    die("Error de conexión Oracle.");
+    die("Error de comunicación con el sistema central.");
 }
 
 // =========================================================================
@@ -15,7 +15,10 @@ if (isset($_GET['exportar'])) {
     $formato = limpiar($_GET['exportar']);
 
     if ($formato !== 'csv') {
-        die("Formato no permitido.");
+        echo "<center><h2>Error de Parámetro</h2><p>El formato solicitado no está permitido.</p>";
+        echo "<p><a href='select_sistemas.html'><button type='button'>Volver</button></a></p></center>";
+        oci_close($conn);
+        exit;
     }
 
     $query = "SELECT ID_SO, NOMBRE, VERSION
@@ -23,6 +26,11 @@ if (isset($_GET['exportar'])) {
               ORDER BY ID_SO ASC";
 
     $stmt = oci_parse($conn, $query);
+    
+    if (!$stmt) {
+        die("Error en el procesamiento de datos del inventario.");
+    }
+    
     oci_execute($stmt);
 
     $datos = [];
@@ -67,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         echo "<h2>Error de Validación</h2>";
         echo "<p style='color:red;'>Nombre no válido.</p>";
-        echo "<p><a href='select_sistemas.html'>Volver</a></p>";
+        echo "<p><a href='select_sistemas.html'><button type='button'>Volver</button></a></p>";
         echo "</center>";
 
         oci_close($conn);
@@ -82,6 +90,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               ORDER BY NOMBRE ASC";
 
     $stmt = oci_parse($conn, $query);
+    
+    if (!$stmt) {
+        die("Error en el procesamiento de la consulta.");
+    }
 
     $busqueda = strtoupper($nombre) . "%";
 
@@ -118,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     oci_free_statement($stmt);
     oci_close($conn);
 
-    echo "<br><p><a href='select_sistemas.html'>Volver</a></p>";
+    echo "<br><p><a href='select_sistemas.html'><button type='button'>Volver</button></a></p>";
     echo "</center>";
 
     exit;

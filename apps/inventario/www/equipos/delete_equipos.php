@@ -4,8 +4,7 @@ require_once '/var/www/privado/session.safe.php';
 require_once '/var/www/privado/db.connect.oracle.php';
 
 if (!$conn) {
-    $e = oci_error();
-    die("Error de conexión Oracle: " . $e['message']);
+    die("Error de comunicación con el sistema central.");
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -24,7 +23,7 @@ if (!preg_match('/^[a-zA-Z0-9.\-_]+$/', $hostname)) {
 
     echo "<h2>Error de Validación</h2>";
     echo "<p style='color:red;'>Hostname no válido.</p>";
-    echo "<p><a href='delete_equipos.html'>Volver</a></p>";
+    echo "<p><a href='delete_equipos.html'><button type='button'>Volver</button></a></p>";
     echo "</center>";
 
     oci_close($conn);
@@ -42,23 +41,24 @@ oci_bind_by_name($stmt, ":hostname", $hostname);
 $result = oci_execute($stmt);
 
 if (!$result) {
-
-    $e = oci_error($stmt);
-
     echo "<h2>Error al eliminar</h2>";
-    echo "<pre style='color:red;'>";
-    print_r($e);
-    echo "</pre>";
+    echo "<p style='color:red;'>No se pudo completar la operación debido a restricciones de integridad en el inventario.</p>";
+
+    echo "<p><a href='delete_equipos.html'><button type='button'>Volver</button></a></p>";
+    echo "</center>";
 
     oci_free_statement($stmt);
     oci_close($conn);
     exit;
 }
 
+// =========================================================
+// COMMIT EXPLÍCITO
+// =========================================================
 oci_commit($conn);
 
 // =========================================================
-// RESULTADO
+// RESULTADO REAL
 // =========================================================
 $rows = oci_num_rows($stmt);
 
@@ -73,7 +73,7 @@ if ($rows > 0) {
     echo "<p style='color:orange;'>No existe el equipo: <b>$hostname</b></p>";
 }
 
-echo "<br><p><a href='delete_equipos.html'>Volver</a></p>";
+echo "<br><p><a href='delete_equipos.html'><button type='button'>Volver</button></a></p>";
 echo "</center>";
 
 ?>

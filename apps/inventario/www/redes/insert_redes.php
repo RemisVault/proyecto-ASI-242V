@@ -7,12 +7,11 @@ require_once '/var/www/privado/db.connect.oracle.php';
 // CONEXIÓN
 // =========================================================================
 if (!$conn) {
-    $e = oci_error();
-    die("Error de conexión Oracle: " . $e['message']);
+    die("Error de comunicación con el sistema central.");
 }
 
 // =========================================================================
-// INSERT
+// INSERT (POST)
 // =========================================================================
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -25,17 +24,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo "<center>";
 
     // =========================================================================
-    // VALIDACIÓN
+    // VALIDACIÓN 
     // =========================================================================
     if (
         !preg_match('/^[A-Z0-9\s_-]+$/', $nombre_red) ||
         !preg_match('/^(\d{1,3}\.){3}\d{1,3}\/([0-9]|[12][0-9]|3[0-2])$/', $direccion_red) ||
         !preg_match('/^(\d{1,3}\.){3}\d{1,3}$/', $gateway) ||
-        !preg_match('/^[a-zA-Z]+[0-9]*$/', $interfaz_router)
+        !preg_match('/^[a-zA-Z]+[0-9]*$/', $interfaz_router) ||
+        !preg_match('/^[a-zA-Z0-9\s_.,-]*$/', $descripcion)
     ) {
         echo "<h2>Error de Validación</h2>";
         echo "<p style='color:red;'>Datos de red no válidos.</p>";
-        echo "<p><a href='insert_redes.html'><button>Volver</button></a></p>";
+        echo "<p><a href='insert_redes.html'><button type='button'>Volver</button></a></p>";
         echo "</center>";
 
         oci_close($conn);
@@ -73,15 +73,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "<h2>Red insertada correctamente</h2>";
         echo "<p style='color:green;'>Se ha añadido la red: <b>$nombre_red</b></p>";
     } else {
-        $e = oci_error($stmt);
         echo "<h2>Error al insertar</h2>";
-        echo "<p style='color:red;'>" . htmlspecialchars($e['message']) . "</p>";
+        echo "<p style='color:red;'>No se pudo completar la operación debido a un conflicto de integridad en el sistema.</p>";
     }
 
     oci_free_statement($stmt);
     oci_close($conn);
 
-    echo "<br><p><a href='insert_redes.html'><button>Volver</button></a></p>";
+    echo "<br><p><a href='insert_redes.html'><button type='button'>Volver</button></a></p>";
     echo "</center>";
 
     exit;

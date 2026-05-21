@@ -7,7 +7,7 @@ require_once '/var/www/privado/db.connect.oracle.php';
 // COMPROBACIÓN DE CONEXIÓN
 // =========================================================================
 if (!$conn) {
-    die("Error de conexión Oracle.");
+    die("Error de comunicación con el sistema central.");
 }
 
 // =========================================================================
@@ -19,10 +19,13 @@ if (isset($_GET['exportar'])) {
 
     // Solo permitir CSV
     if ($formato !== 'csv') {
-        die("Formato no permitido.");
+        echo "<center><h2>Error de Parámetro</h2><p>El formato solicitado no está permitido.</p>";
+        echo "<p><a href='select_redes.html'><button type='button'>Volver</button></a></p></center>";
+        oci_close($conn);
+        exit;
     }
 
-    $query = "SELECT 
+    $query = "SELECT
                 ID_RED,
                 NOMBRE_RED,
                 DIRECCION_RED,
@@ -33,6 +36,11 @@ if (isset($_GET['exportar'])) {
               ORDER BY ID_RED ASC";
 
     $stmt = oci_parse($conn, $query);
+    
+    if (!$stmt) {
+        die("Error en el procesamiento de datos del inventario.");
+    }
+    
     oci_execute($stmt);
 
     $datos = [];
@@ -91,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     echo "<h2>Resultados de búsqueda</h2>";
 
-    $query = "SELECT 
+    $query = "SELECT
                 ID_RED,
                 NOMBRE_RED,
                 DIRECCION_RED,
@@ -103,6 +111,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               ORDER BY ID_RED ASC";
 
     $stmt = oci_parse($conn, $query);
+    
+    if (!$stmt) {
+        die("Error en el procesamiento de la consulta.");
+    }
 
     $busqueda = "%" . $nombre_red . "%";
 

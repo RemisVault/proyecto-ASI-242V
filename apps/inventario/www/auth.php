@@ -3,8 +3,16 @@ require_once '/var/www/privado/session.safe.php';
 require_once '/var/www/privado/db.connect.ldap_admin.php';
 
 $user = limpiar($_POST["user"]);
-$user_ldap = str_replace(array('\\', '*', '(', ')', "\0"), '', $user);
 
+// Validación estricta con preg_match para el usuario antes de procesar la petición
+// Permite letras, números, puntos, guiones y guiones bajos
+if (!preg_match("/^[a-zA-Z0-9._-]+$/", $user)) {
+    echo "Formato de usuario no válido.";
+    echo "<br><br><a href='index.php'><button>Volver</button></a>";
+    exit;
+}
+
+$user_ldap = str_replace(array('\\', '*', '(', ')', "\0"), '', $user);
 $password = limpiar($_POST["password"]);
 
 $auth_success = false;

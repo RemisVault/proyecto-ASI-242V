@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file_import'])) {
     if (!preg_match('/^.*\.(json|yaml|yml)$/i', $file_name, $matches)) {
         echo "<h2>Error de Validación</h2>";
         echo "<p style='color: red;'>El formato del archivo no es válido. Solo se permiten extensiones .json o .yaml</p>";
-        echo "<p><a href=''><button type='button'>Volver</button></a></p>";
+        echo "<p><a href='menu.php'><button type='button'>Volver</button></a></p>";
         echo "</center>";
         exit;
     }
@@ -40,11 +40,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file_import'])) {
         $lineas = explode("\n", $contenido);
         $tabla_actual = '';
         $fila_actual = [];
-        
+
         foreach ($lineas as $linea) {
             $linea = rtrim($linea);
             if (empty($linea) || $linea === '---') continue;
-            
+
             if (preg_match('/^([A-Z_]+):$/', $linea, $m_tabla)) {
                 if (!empty($fila_actual) && !empty($tabla_actual)) {
                     $data_import[$tabla_actual][] = $fila_actual;
@@ -62,7 +62,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file_import'])) {
             }
             if (preg_match('/^\s+([A-Z0-9_]+):\s*"(.*)"$/', $linea, $m_valores)) {
                 $campo = $m_valores[1];
-                $valor = $m_valores[2];
+                // SOLUCIÓN XSS: Saneamos el valor extraído antes de guardarlo en el array
+                $valor = limpiar($m_valores[2]);
                 $fila_actual[$campo] = ($valor === '-') ? null : $valor;
             }
         }
@@ -73,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file_import'])) {
 
     if (!empty($data_import)) {
         $tablas_orden = [
-            'EQUIPO_SERVICIO', 'EQUIPO_HARDWARE', 'USUARIOS_CREDENCIALES', 
+            'EQUIPO_SERVICIO', 'EQUIPO_HARDWARE', 'USUARIOS_CREDENCIALES',
             'EQUIPOS', 'SERVICIOS', 'SISTEMAS_OPERATIVOS', 'REDES', 'PARAMETROS_BASICOS'
         ];
 
@@ -92,6 +93,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file_import'])) {
 
             foreach ($data_import[$tabla] as $fila) {
                 $columnas = array_keys($fila);
+                $columnas_validas = true;
+                foreach ($columnas as $col) {
+                    if (!preg_match('/^[a-zA-Z0-9_]+$/', $col)) {
+                        $columnas_validas = false;
+                        break;
+                    }
+                }
+                
+                if (!$columnas_validas) {
+                    $error_ocurrido = true;
+                    continue; // Descarta esta fila corrupta o maliciosa
+                }
+
                 $placeholders = array_map(function($col) { return ":" . $col; }, $columnas);
 
                 $sql_ins = "INSERT INTO " . $tabla . " (" . implode(', ', $columnas) . ") VALUES (" . implode(', ', $placeholders) . ")";
@@ -123,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file_import'])) {
     }
 
     oci_close($conn);
-    echo "<p><a href=''><button type='button'>Volver al Menú</button></a></p>";
+    echo "<p><a href='menu.php'><button type='button'>Volver al Menú</button></a></p>";
     echo "</center>";
     exit;
 }
@@ -210,7 +224,7 @@ if (isset($_GET['export']) && in_array($_GET['export'], ['json', 'yaml'])) {
     <form method="POST" action="" enctype="multipart/form-data" style="margin: 0; padding: 0;">
         <input type="file" id="import_json" name="file_import" accept=".json" style="display: none;" onchange="this.form.submit()">
         <input type="file" id="import_yaml" name="file_import" accept=".yaml,.yml" style="display: none;" onchange="this.form.submit()">
-        
+
         <button type="button" onclick="document.getElementById('import_json').click()" style="margin-right: 5px; cursor: pointer;">Importar JSON</button>
         <button type="button" onclick="document.getElementById('import_yaml').click()" style="cursor: pointer;">Importar YAML</button>
     </form>

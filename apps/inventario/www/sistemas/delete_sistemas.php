@@ -4,7 +4,7 @@ require_once '/var/www/privado/session.safe.php';
 require_once '/var/www/privado/db.connect.oracle.php';
 
 if (!$conn) {
-    die("Error de conexión Oracle.");
+    die("Error de comunicación con el sistema central.");
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -23,7 +23,7 @@ echo "<center>";
 if (!preg_match('/^[A-Z0-9\s.\-_]+$/', $nombre)) {
     echo "<h2>Error de Validación</h2>";
     echo "<p style='color:red;'>Nombre no válido</p>";
-    echo "<a href='delete_sistemas.html'><button>Volver</button></a>";
+    echo "<p><a href='delete_sistemas.html'><button type='button'>Volver</button></a></p>";
     echo "</center>";
     exit;
 }
@@ -31,7 +31,7 @@ if (!preg_match('/^[A-Z0-9\s.\-_]+$/', $nombre)) {
 if (!preg_match('/^[A-Z0-9\s.\-_]+$/', $version)) {
     echo "<h2>Error de Validación</h2>";
     echo "<p style='color:red;'>Versión no válida</p>";
-    echo "<a href='delete_sistemas.html'><button>Volver</button></a>";
+    echo "<p><a href='delete_sistemas.html'><button type='button'>Volver</button></a></p>";
     echo "</center>";
     exit;
 }
@@ -55,7 +55,7 @@ oci_free_statement($stmt);
 if (!$row) {
     echo "<h2>No encontrado</h2>";
     echo "<p style='color:orange;'>$nombre $version</p>";
-    echo "<a href='delete_sistemas.html'><button>Volver</button></a>";
+    echo "<p><a href='delete_sistemas.html'><button type='button'>Volver</button></a></p>";
     echo "</center>";
     oci_close($conn);
     exit;
@@ -73,6 +73,16 @@ oci_bind_by_name($stmt, ":id_so", $id_so);
 
 $result = oci_execute($stmt, OCI_COMMIT_ON_SUCCESS);
 
+if (!$result) {
+    echo "<h2>Error al eliminar</h2>";
+    echo "<p style='color:red;'>No se pudo completar la operación debido a un conflicto de integridad en el sistema.</p>";
+    echo "<p><a href='delete_sistemas.html'><button type='button'>Volver</button></a></p>";
+    echo "</center>";
+    oci_free_statement($stmt);
+    oci_close($conn);
+    exit;
+}
+
 oci_free_statement($stmt);
 oci_close($conn);
 
@@ -82,7 +92,7 @@ oci_close($conn);
 echo "<h2>Eliminado correctamente</h2>";
 echo "<p>$nombre $version</p>";
 
-echo "<br><a href='delete_sistemas.html'><button>Volver</button></a>";
+echo "<br><p><a href='delete_sistemas.html'><button type='button'>Volver</button></a></p>";
 
 echo "</center>";
 
