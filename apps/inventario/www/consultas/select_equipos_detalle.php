@@ -3,11 +3,11 @@ require_once '/var/www/privado/session.safe.php';
 require_once '/var/www/privado/db.connect.oracle.php';
 
 if (!$conn) {
-    die("Error de conexión Oracle.");
+    die("Error de comunicación con el sistema central.");
 }
 
 // =====================================================
-// EXPORT CSV )
+// EXPORT CSV
 // =====================================================
 if (isset($_GET['exportar']) && $_GET['exportar'] === 'csv') {
     $sql = "
@@ -21,6 +21,11 @@ if (isset($_GET['exportar']) && $_GET['exportar'] === 'csv') {
     ";
 
     $stmt = oci_parse($conn, $sql);
+
+    if (!$stmt) {
+        die("Error en el procesamiento de datos del inventario.");
+    }
+
     oci_execute($stmt);
 
     $data = [];
@@ -57,14 +62,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Validación estricta con preg_match para ambos campos
     if ($id_red !== '' && !preg_match('/^[0-9]+$/', $id_red)) {
-        echo "<center><h2 style='color:red;'>Error de validación</h2><p>El ID de red no es válido.</p><a href='select_equipos_detalle.php'><button>Volver</button></a></center>";
+        echo "<center><h2 style='color:red;'>Error de validación</h2><p>El ID de red no es válido.</p><p><a href='select_equipos_detalle.php'><button type='button'>Volver</button></a></p></center>";
+        oci_close($conn);
         exit;
     }
     if ($hostname !== '' && !preg_match('/^[a-zA-Z0-9.\-_]*$/', $hostname)) {
-        echo "<center><h2 style='color:red;'>Error de validación</h2><p>El Hostname contiene caracteres no permitidos.</p><a href='select_equipos_detalle.php'><button>Volver</button></a></center>";
+        echo "<center><h2 style='color:red;'>Error de validación</h2><p>El Hostname contiene caracteres no permitidos.</p><p><a href='select_equipos_detalle.php'><button type='button'>Volver</button></a></p></center>";
+        oci_close($conn);
         exit;
     }
-    
+
     // Si el usuario pulsó "Cargar Equipos", reseteamos el hostname para evitar filtros cruzados erróneos
     if ($accion === 'cargar_equipos') {
         $hostname = '';
@@ -91,21 +98,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <h2>Consulta completa de Equipos</h2>
 
     <form method="post" action="select_equipos_detalle.php">
-        
+
         <label for="id_red">Red:</label>
         <select name="id_red" id="id_red">
             <option value="">-- Todas las redes --</option>
             <?php
             $stmtR = oci_parse($conn, "SELECT ID_RED, NOMBRE_RED FROM REDES ORDER BY NOMBRE_RED");
-            oci_execute($stmtR);
-            while ($rowR = oci_fetch_assoc($stmtR)) {
-                $selected = ($id_red == $rowR['ID_RED']) ? 'selected' : '';
-                echo "<option value='" . htmlspecialchars($rowR['ID_RED']) . "' $selected>" . htmlspecialchars($rowR['NOMBRE_RED']) . "</option>";
+            if ($stmtR) {
+                oci_execute($stmtR);
+                while ($rowR = oci_fetch_assoc($stmtR)) {
+                    $selected = ($id_red == $rowR['ID_RED']) ? 'selected' : '';
+                    echo "<option value='" . htmlspecialchars($rowR['ID_RED']) . "' $selected>" . htmlspecialchars($rowR['NOMBRE_RED']) . "</option>";
+                }
+                oci_free_statement($stmtR);
             }
-            oci_free_statement($stmtR);
             ?>
         </select>
-        
+
         <button type="submit" name="accion" value="cargar_equipos">Filtrar Red</button>
 
         &nbsp;&nbsp;&nbsp;
@@ -119,18 +128,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $sqlE .= " WHERE ID_RED = :id_red";
             }
             $sqlE .= " ORDER BY HOSTNAME";
-            
+
             $stmtE = oci_parse($conn, $sqlE);
-            if ($id_red !== '') {
-                oci_bind_by_name($stmtE, ":id_red", $id_red);
+            if ($stmtE) {
+                if ($id_red !== '') {
+                    oci_bind_by_name($stmtE, ":id_red", $id_red);
+                }
+                oci_execute($stmtE);
+
+                while ($rowE = oci_fetch_assoc($stmtE)) {
+                    $selected = ($hostname === $rowE['HOSTNAME']) ? 'selected' : '';
+                    echo "<option value='" . htmlspecialchars($rowE['HOSTNAME']) . "' $selected>" . htmlspecialchars($rowE['HOSTNAME']) . "</option>";
+                }
+                oci_free_statement($stmtE);
             }
-            oci_execute($stmtE);
-            
-            while ($rowE = oci_fetch_assoc($stmtE)) {
-                $selected = ($hostname === $rowE['HOSTNAME']) ? 'selected' : '';
-                echo "<option value='" . htmlspecialchars($rowE['HOSTNAME']) . "' $selected>" . htmlspecialchars($rowE['HOSTNAME']) . "</option>";
-            }
-            oci_free_statement($stmtE);
             ?>
         </select>
 
@@ -166,6 +177,10 @@ if ($accion === 'buscar') {
     ";
 
     $stmt = oci_parse($conn, $sql);
+
+    if (!$stmt) {
+        die("Error en el procesamiento de la consulta compleja.");
+    }
 
     $param_red = ($id_red === '') ? null : $id_red;
     $param_host = ($hostname === '') ? null : $hostname;
@@ -212,7 +227,7 @@ oci_close($conn);
 ?>
 
     <br><br>
-    <p><a href="index.php">Volver al Menú Principal</a></p>
+    <p><a href="index.php"><button type="button">Volver al Menú Principal</button></a></p>
 
 </center>
 

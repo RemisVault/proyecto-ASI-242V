@@ -1,6 +1,4 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
 require_once '/var/www/privado/session.safe.php';
 require_once '/var/www/privado/db.connect.oracle.php';
@@ -9,8 +7,7 @@ require_once '/var/www/privado/db.connect.oracle.php';
 // CONEXIÓN
 // =========================================================================
 if (!$conn) {
-    $e = oci_error();
-    die("Error de conexión Oracle: " . $e['message']);
+    die("Error de comunicación con el sistema central.");
 }
 
 // =========================================================================
@@ -18,7 +15,6 @@ if (!$conn) {
 // =========================================================================
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    // limpiar() ya maneja el trim interno de la cadena
     $nombre_red = limpiar($_POST["nombre_red"] ?? '');
 
     echo "<center>";
@@ -28,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         echo "<h2>Error de Validación</h2>";
         echo "<p style='color:red;'>Nombre de red no válido.</p>";
-        echo "<p><a href='equipos_por_red.html'><button style='cursor:pointer;'>Volver</button></a></p>";
+        echo "<p><a href='equipos_por_red.html'><button type='button'>Volver</button></a></p>";
         echo "</center>";
 
         oci_close($conn);
@@ -45,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = oci_parse($conn, $query);
 
     if (!$stmt) {
-        die(oci_error($conn)['message']);
+        die("Error en el procesamiento de la consulta del inventario.");
     }
 
     // Vinculamos los parámetros IN y OUT
@@ -54,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Ejecutamos controlando de forma limpia el RAISE_APPLICATION_ERROR del procedimiento
     if (@oci_execute($stmt)) {
-        
+
         // Ejecutamos el cursor para poder recorrer sus datos
         oci_execute($p_cursor);
 
@@ -91,15 +87,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         oci_free_statement($p_cursor);
 
     } else {
-        // Captura el error -2004 definido en el EXCEPTION de tu Oracle si la red no existe
         $e = oci_error($stmt);
-        echo "<p style='color:red;'><strong>" . htmlspecialchars($e['message']) . "</strong></p>";
+        if (preg_match('/ORA-20\d{3}/', $e['message'])) {
+            echo "<p style='color:red;'><strong>" . htmlspecialchars($e['message']) . "</strong></p>";
+        } else {
+            echo "<p style='color:red;'><strong>No se pudo completar la consulta debido a un problema técnico en el servidor central.</strong></p>";
+        }
     }
 
     oci_free_statement($stmt);
     oci_close($conn);
 
-    echo "<br><p><a href='equipos_por_red.html'><button style='cursor:pointer;'>Volver</button></a></p>";
+    echo "<br><p><a href='equipos_por_red.html'><button type='button'>Volver</button></a></p>";
     echo "</center>";
 
     exit;

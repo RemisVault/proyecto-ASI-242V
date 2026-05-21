@@ -32,7 +32,7 @@ $user = $_SESSION["user"];
 
     <p>
         <a href="equipos_por_red.html">
-            Cambiar red de un equipo
+            Buscar redes
         </a>
     </p>
 
