@@ -1,7 +1,7 @@
 <?php
 require_once '/var/www/privado/session.safe.php';
 
-if (!isset($_SESSION["auth"]) || $_SESSION["auth"] !== true) {
+if (!isset($_SESSION["usuario_autenticado"]) || $_SESSION["usuario_autenticado"] !== true) {
     header("Location: index.php");
     exit;
 }
@@ -201,7 +201,6 @@ if (isset($_GET['export']) && in_array($_GET['export'], ['json', 'yaml'])) {
     exit;
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
