@@ -45,7 +45,7 @@
 ### 7. Extensión e Infraestructura Cloud (Microsoft Azure)
 * **Redes Cloud:** Configuración de Grupos de Recursos, Redes Virtuales (VNets), direccionamiento IP público corporativo y Grupos de Seguridad de Red (NSG) en la nube.
 * **Hibridación (Túnel VPN Site-to-Site):** Despliegue de un segundo enrutador perimetral Zentyal (`ROUTER02`) en Azure, estableciendo un túnel VPN permanente contra el entorno local (`ROUTER01`) y anunciando dinámicamente las subredes de ambos entornos.
-* **Migración de Servicios (LAMP02-ID):** Réplica y migración completa del ecosistema dockerizado (WordPress, Moodle e Inventario con Base de Datos Oracle) hacia máquinas virtuales en la nube.
+* **Migración de Servicios (LAMP02-242V):** Réplica y migración completa del ecosistema dockerizado (WordPress, Moodle e Inventario con Base de Datos Oracle) hacia máquinas virtuales en la nube.
 * **DNS Externo corporativo:** Configuración del servicio DNS externo mediante **Bind9** (`named.conf.options` y `named.conf.local`) con zonas directas e inversas públicas que resuelven los nombres de las aplicaciones migradas hacia las IPs públicas de Azure.
 
 ### 8. Automatización, Sincronización y Seguridad Global
